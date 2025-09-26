@@ -10,9 +10,10 @@ public class ConsoleMultiTrackMixer {
     private final Map<String, AudioPlayer> players = new HashMap<>();
     private final String[] instruments = {
             "AcousticGuitar",
+            "Bv",
             "Bass",
             "DrumKit",
-            "EletricGuitar",
+            "ElectricGuitar",
             "Harp",
             "Lv",
             "Oboe",
@@ -37,7 +38,12 @@ public class ConsoleMultiTrackMixer {
 
             System.out.println("Mixer do Console. Digite o nome do instrumento para ligar/desligar.");
             System.out.println("Instrumentos: " + String.join(", ", instruments));
-            System.out.println("Comandos: 'play', 'stop', 'sair' ou o nome do instrumento.");
+            System.out.println("Comandos:\n'play'(inicia a repoducao)" +
+                    " \n'stop'(Pausa toda a reproucao) " +
+                    " \n'sair'(fecha o progroma)" +
+                    " \n nome do instrumento para mutar "+
+                    "\n'pause'(Pausa a reproducao "+
+                    "\n'resume'(volta a reprocao)");
 
             Scanner scanner = new Scanner(System.in);
             while (true) {
@@ -52,6 +58,12 @@ public class ConsoleMultiTrackMixer {
                     System.out.println("Reprodução iniciada para todas as faixas.");
                 } else if (input.equalsIgnoreCase("stop")) {
                     players.values().forEach(AudioPlayer::stop);
+                    System.out.println("Reprodução parada para todas as faixas.");
+                }else if (input.equalsIgnoreCase("pause")) {
+                    players.values().forEach(AudioPlayer::pause);
+                    System.out.println("Reprodução parada para todas as faixas.");
+                }else if (input.equalsIgnoreCase("resume")) {
+                    players.values().forEach(AudioPlayer::resume);
                     System.out.println("Reprodução parada para todas as faixas.");
                 } else if (players.containsKey(input)) {
                     players.get(input).toggleMute();

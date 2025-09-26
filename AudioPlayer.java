@@ -6,13 +6,15 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
+//boolean que atomico que so muda de estado de forma atomica(sem risco de varias threads a modificarem ao mesmo tempo)
 
 public class AudioPlayer implements Runnable {
 
     private final String filePath;
-    private final AudioFormat format;
+    private final AudioFormat format;//biblioteca do java para trabalhar o formato de audio(configurar o formato do audio que receberemos)
     private final AtomicBoolean isPlaying = new AtomicBoolean(false);
     AtomicBoolean isMuted = new AtomicBoolean(false);
+    private final AtomicBoolean isPaused = new AtomicBoolean(false);
 
     public AudioPlayer(String filePath, AudioFormat format) {
         this.filePath = filePath;
@@ -23,6 +25,13 @@ public class AudioPlayer implements Runnable {
         if (!isPlaying.getAndSet(true)) {
             new Thread(this).start();
         }
+    }
+    public void pause() {
+        isPaused.set(true);
+    }
+
+    public void resume() {
+        isPaused.set(false);
     }
 
     public void stop() {
@@ -39,6 +48,8 @@ public class AudioPlayer implements Runnable {
     public void run() {
         // --- AQUI É ONDE VEMOS A THREAD ---
         System.out.println("Iniciando a reprodução da faixa " + filePath + " na thread: " + Thread.currentThread().getName());
+        //--********************************--//
+
         try {
             AudioInputStream stream = AudioSystem.getAudioInputStream(new File(filePath));
             AudioInputStream convertedStream = AudioSystem.getAudioInputStream(format, stream);
@@ -50,8 +61,8 @@ public class AudioPlayer implements Runnable {
             int bytesRead;
 
             while (isPlaying.get()) {
-                if (isMuted.get()) {
-                    Thread.sleep(1000);
+                if (isMuted.get()||isPaused.get()) {
+                    Thread.sleep(100);
                     continue;
                 }
 
